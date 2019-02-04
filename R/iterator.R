@@ -1,23 +1,37 @@
-iterate_pop <- function(popfun = NULL, parms = NULL){
+#' Iterate a population model
+#'
+#' @param parms a data_frame containing the parameters of the model. Must have
+#' arguments t and N0.
+#' @param popfun a function that steps the model by one
+#'
+#' @return a data_frame containing the input parameters and a column of projected population size
+#' @export
+#'
+#' @examples
+#'
+iterate_pop <- function(parms = NULL, popfun = NULL){
   if (is.null(popfun)) stop("must provide population function")
-  if (is.null(parms)) stop("must provide parameter dataframe")
-  N <- vector("numeric", length = parms$t)
+  if (is.null(parms)) stop("must provide parameter data_frame")
+  N <- vector("numeric", length = nrow(parms))
   N[1] <- parms$N0[1]  # first entry in vector is initial population size
   last_t <- length(N)
-  # these next lines will cause warnings if
-  # b is not either length 1 or (t+1)
-  if (length(parms$b) != last_t) parms$b <- rep(parms$b, times=(last_t))
-  if (length(parms$d) != last_t) parms$d <- rep(parms$d, times=(last_t))
   # Now we "loop" and calculate N for each time
-  # notice that the code is *exactly* like the equation
   for (i in seq_along(parms$t[-last_t])){
-    N[i+1] <- popfun(N[i], parms)
+    N[i+1] <- popfun(N[i], parms[i,])
   }
-  return(data.frame(t=parms$t, b = parms$b, d = parms$d, N = N))
+  return(tibble::tibble(t=parms$t, b = parms$b, d = parms$d, N = N))
 }
 
+#' Exponential population growth
+#'
+#' @param N0 Initial population size
+#' @param parms one row data_frame with model parameters
+#'
+#' @return a single numeric value which is the next population size
+#' @export
+#'
 exppop <- function(N0, parms){
-  N1 <- N0 * (1 + parms$b - parms$d)
-
+  N1 <- with(parms,
+             N0 * (1 + b[1] - d[1]))
   return(N1)
 }
