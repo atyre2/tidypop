@@ -13,8 +13,8 @@
 #'
 iterate_pop <- function(N0 = NULL, parms = NULL, popfun = NULL){
   if (is.null(N0)) stop("must provide initial population")
-  if (is.null(popfun)) stop("must provide population function")
   if (is.null(parms)) stop("must provide parameter data_frame")
+  if (is.null(popfun)) stop("must provide population function")
   last_t <- nrow(parms)
   Ndim <- length(N0)
   # by stashing this in a matrix we enable structured pop'n models
