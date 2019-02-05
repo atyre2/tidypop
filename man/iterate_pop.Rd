@@ -4,13 +4,16 @@
 \alias{iterate_pop}
 \title{Iterate a population model}
 \usage{
-iterate_pop(parms = NULL, popfun = NULL)
+iterate_pop(N0 = NULL, parms = NULL, popfun = NULL)
 }
 \arguments{
-\item{parms}{a data_frame containing the parameters of the model. Must have
-arguments t and N0.}
+\item{N0}{a numeric vector of the initial population size}
 
-\item{popfun}{a function that steps the model by one}
+\item{parms}{a data_frame containing the parameters of the model. Must have
+arguments t.}
+
+\item{popfun}{a function that steps the model by one time step. Must take all
+the columns in parms as arguments, plus N0.}
 }
 \value{
 a data_frame containing the input parameters and a column of projected population size
