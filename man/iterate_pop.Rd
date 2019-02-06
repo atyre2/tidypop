@@ -7,10 +7,11 @@
 iterate_pop(N0 = NULL, parms = NULL, popfun = NULL)
 }
 \arguments{
-\item{N0}{a numeric vector of the initial population size}
+\item{N0}{a numeric vector of the initial population size. If named, these names
+will be used in the returned tibble.}
 
-\item{parms}{a data_frame containing the parameters of the model. Must have
-arguments t.}
+\item{parms}{a tibble containing the parameters of the model. Must have
+at least column `t`, and one row for each time step.}
 
 \item{popfun}{a function that steps the model by one time step. Must take all
 the columns in parms as arguments, plus N0.}
@@ -19,7 +20,8 @@ the columns in parms as arguments, plus N0.}
 a data_frame containing the input parameters and a column of projected population size
 }
 \description{
-Iterate a population model
+Iterate a population model forward in time from an initial population vector.
+Parameters of the model can vary with time.
 }
 \examples{
 

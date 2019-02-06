@@ -1,5 +1,8 @@
 #' Iterate a population model
 #'
+#' Iterate a population model forward in time from an initial population vector.
+#' Parameters of the model can vary with time.
+#'
 #' @param N0 a numeric vector of the initial population size. If named, these names
 #' will be used in the returned tibble.
 #' @param parms a tibble containing the parameters of the model. Must have
