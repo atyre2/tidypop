@@ -1,8 +1,9 @@
 #' Iterate a population model
 #'
-#' @param N0 a numeric vector of the initial population size
-#' @param parms a data_frame containing the parameters of the model. Must have
-#' arguments t.
+#' @param N0 a numeric vector of the initial population size. If named, these names
+#' will be used in the returned tibble.
+#' @param parms a tibble containing the parameters of the model. Must have
+#' at least column `t`, and one row for each time step.
 #' @param popfun a function that steps the model by one time step. Must take all
 #' the columns in parms as arguments, plus N0.
 #'
@@ -26,7 +27,11 @@ iterate_pop <- function(N0 = NULL, parms = NULL, popfun = NULL){
   for (i in seq_along(parms$t[-last_t])){
     N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,])))
   }
-  return(tibble::tibble(t=parms$t, b = parms$b, d = parms$d, N = N))
+  if(!is.null(names(N0))){
+    # fix column names here -- if done before do.call() c() concatenates colnames
+    colnames(N) <- names(N0)
+  }
+  return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
 }
 
 #' Exponential population growth

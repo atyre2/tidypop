@@ -26,7 +26,7 @@ testout <- tibble::tribble(
 )
 
 test_that("correct return for testmodel", {
-  expect_equal(iterate_pop(N0=10, parms = parms, popfun = testmodel),
+  expect_equal(iterate_pop(N0=c(N=10), parms = parms, popfun = testmodel),
                testout)
 })
 

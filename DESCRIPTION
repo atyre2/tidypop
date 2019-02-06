@@ -10,5 +10,6 @@ LazyData: true
 Suggests: 
     testthat
 Imports: 
-    tibble
+    tibble,
+    dplyr
 RoxygenNote: 6.0.1
