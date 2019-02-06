@@ -25,9 +25,26 @@ testout <- tibble::tribble(
   10L, 0.2, 0.1, 23.57947691
 )
 
+# need "as.data.frame" to use base::all_equal otherwise trys joining on
+# numbers
 test_that("correct return for testmodel", {
-  expect_equal(iterate_pop(N0=c(N=10), parms = parms, popfun = testmodel),
-               testout)
+  expect_equal(as.data.frame(iterate_pop(N0=c(N=10), parms = parms, popfun = testmodel)),
+               tolerance = 1e-5,
+               as.data.frame(testout))
 })
 
+wb_inputs <- tibble::tibble(t = 1961:1966, b = 1.06411639, d = 1.)
+testout2 <- tibble::tribble(
+  ~t,               ~b, ~d,      ~Population,
+  1961L, 1.06411639027921,  1,               10,
+  1962L, 1.06411639027921,  1, 10.6411639027921,
+  1963L, 1.06411639027921,  1, 11.3234369206085,
+  1964L, 1.06411639027921,  1, 12.0494548215122,
+  1965L, 1.06411639027921,  1,    12.8220223695,
+  1966L, 1.06411639027921,  1, 13.6441241599116
+)
 
+test_that("correct return for testmodel 2", {
+  expect_equal(as.data.frame(iterate_pop(N0=c(Population=10), parms = wb_inputs, popfun = testmodel)),
+               as.data.frame(testout2))
+})
