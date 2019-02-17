@@ -8,7 +8,7 @@ iterate(parms = NULL, N0 = NULL, popfun = NULL)
 }
 \arguments{
 \item{parms}{a tibble containing the parameters of the model. Must have
-at least column `t`, and one row for each time step.}
+one row for each time step.}
 
 \item{N0}{a numeric vector of the initial population size. If named, these names
 will be used in the returned tibble.}
@@ -22,6 +22,11 @@ a data_frame containing the input parameters and a column of projected populatio
 \description{
 Iterate a population model forward in time from an initial population vector.
 Parameters of the model can vary with time.
+}
+\details{
+Will fail if any of the three input arguments is NULL. If `parms` only has
+a single row, just column binds the initial population size. If `parms` has
+zero rows, the result also has zero rows.
 }
 \examples{
 

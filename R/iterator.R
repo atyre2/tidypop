@@ -10,6 +10,10 @@
 #' @param popfun a function that steps the model by one time step.
 #' Must take at least N0 as an argument.
 #'
+#' @details
+#' Will fail if any of the three input arguments is NULL. If `parms` only has
+#' a single row, just column binds the initial population size. If `parms` has
+#' zero rows, the result also has zero rows.
 #' @return a data_frame containing the input parameters and a column of projected population size
 #' @export
 #'
