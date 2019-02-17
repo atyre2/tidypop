@@ -21,6 +21,7 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if (is.null(popfun)) stop("must provide population function")
   last_t <- nrow(parms)
   Ndim <- length(N0)
+  popfunargs <- formals(popfun)
   # by stashing this in a matrix we enable structured pop'n models
   # I think.
   N <- matrix(0., nrow = last_t, ncol = Ndim)
@@ -33,6 +34,13 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
     colnames(N) <- names(N0)
+  } else {
+    # no names, so default to N, N1, etc
+    if (Ndim==1){
+      colnames(N) <- "N"
+    } else {
+      colnames(N) <- paste0("N", 1:Ndim)
+    }
   }
   return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
 }
