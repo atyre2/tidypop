@@ -7,8 +7,8 @@
 #' will be used in the returned tibble.
 #' @param parms a tibble containing the parameters of the model. Must have
 #' at least column `t`, and one row for each time step.
-#' @param popfun a function that steps the model by one time step. Must take all
-#' the columns in parms as arguments, plus N0.
+#' @param popfun a function that steps the model by one time step.
+#' Must take at least N0 as an argument.
 #'
 #' @return a data_frame containing the input parameters and a column of projected population size
 #' @export

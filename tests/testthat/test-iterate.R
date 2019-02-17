@@ -48,3 +48,16 @@ test_that("correct return for testmodel 2", {
   expect_equal(as.data.frame(iterate(N0=c(Population=10), parms = wb_inputs, popfun = testmodel)),
                as.data.frame(testout2))
 })
+
+inputs3 <- tibble::tibble(t = 1961:1966)
+testmodel2 <- function(N0){
+  b <- 1.06411639027921
+  d <- 1.
+  N1 <- N0 * (1 + b - d)
+  return(N1)
+}
+
+test_that("OK with only N0", {
+  expect_equal(as.data.frame(iterate(N0=c(Population=10), parms = inputs3, popfun = testmodel2)),
+               as.data.frame(testout2[,c(1,4)]))
+})
