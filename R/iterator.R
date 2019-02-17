@@ -6,7 +6,7 @@
 #' @param N0 a numeric vector of the initial population size. If named, these names
 #' will be used in the returned tibble.
 #' @param parms a tibble containing the parameters of the model. Must have
-#' at least column `t`, and one row for each time step.
+#' one row for each time step.
 #' @param popfun a function that steps the model by one time step.
 #' Must take at least N0 as an argument.
 #'
@@ -23,17 +23,23 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   Ndim <- length(N0)
   popfunargs <- names(formals(popfun))
   popfunargs <- popfunargs[popfunargs!="N0"] # remove N0
-  # by stashing this in a matrix we enable structured pop'n models
+  # by stashing N in a matrix we enable structured pop'n models
   # I think.
   N <- matrix(0., nrow = last_t, ncol = Ndim)
-  N[1,] <- N0
-  # Now we "loop" and calculate N for each time
-  # pass N[,] as a matrix to accomodate
-  for (i in seq_along(parms$t[-last_t])){
-    N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
-  }
+  if (last_t > 0){
+    # if parms empty, simply skip and return empty dataframe
+    N[1,] <- N0
+    # Now we "loop" and calculate N for each time
+    # pass N[,] as a matrix to accomodate
+    for (i in seq_along(parms$t[-last_t])){
+      N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
+    }
+
+  } # last_t > 0
+
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
+    # in do.call()
     colnames(N) <- names(N0)
   } else {
     # no names, so default to N, N1, etc
@@ -42,7 +48,8 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
     } else {
       colnames(N) <- paste0("N", 1:Ndim)
     }
-  }
+  } # end check names
+
   return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
 }
 

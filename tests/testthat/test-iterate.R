@@ -61,3 +61,15 @@ test_that("OK with only N0", {
   expect_equal(as.data.frame(iterate(N0=c(Population=10), parms = inputs3, popfun = testmodel2)),
                as.data.frame(testout2[,c(1,4)]))
 })
+
+inputs4 <- tibble::tibble()
+test_that("OK with empty tibble",{
+  expect_equal(nrow(iterate(N0=c(Population=10), parms = inputs4, popfun = testmodel2)), 0)
+}
+          )
+
+inputs5 <- tibble::tibble(Year = 1961)
+test_that("OK with one row tibble",{
+  expect_equal(nrow(iterate(N0=c(Population=10), parms = inputs5, popfun = testmodel2)), 1)
+}
+)
