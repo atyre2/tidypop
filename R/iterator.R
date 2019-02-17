@@ -15,7 +15,7 @@
 #'
 #' @examples
 #'
-iterate_pop <- function(N0 = NULL, parms = NULL, popfun = NULL){
+iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if (is.null(N0)) stop("must provide initial population")
   if (is.null(parms)) stop("must provide parameter data_frame")
   if (is.null(popfun)) stop("must provide population function")
