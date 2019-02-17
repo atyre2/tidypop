@@ -31,8 +31,11 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
     N[1,] <- N0
     # Now we "loop" and calculate N for each time
     # pass N[,] as a matrix to accomodate
-    for (i in seq_along(parms$t[-last_t])){
-      N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
+    if (last_t > 1){
+      for (i in 1:(last_t-1)){
+        N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
+      }
+
     }
 
   } # last_t > 0
