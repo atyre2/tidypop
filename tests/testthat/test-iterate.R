@@ -6,7 +6,7 @@ test_that("inputs checked out", {
   expect_error(iterate(N0 = 10, parms = parms), "must provide population function")
 })
 
-testmodel <- function(N0, b, d, t){
+testmodel <- function(N0, b, d){
   N1 <- N0 * (1 + b - d)
   return(N1)
 }

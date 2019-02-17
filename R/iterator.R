@@ -21,7 +21,8 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if (is.null(popfun)) stop("must provide population function")
   last_t <- nrow(parms)
   Ndim <- length(N0)
-  popfunargs <- formals(popfun)
+  popfunargs <- names(formals(popfun))
+  popfunargs <- popfunargs[popfunargs!="N0"] # remove N0
   # by stashing this in a matrix we enable structured pop'n models
   # I think.
   N <- matrix(0., nrow = last_t, ncol = Ndim)
@@ -29,7 +30,7 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   # Now we "loop" and calculate N for each time
   # pass N[,] as a matrix to accomodate
   for (i in seq_along(parms$t[-last_t])){
-    N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,])))
+    N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
   }
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
