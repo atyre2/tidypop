@@ -29,5 +29,12 @@ a single row, just column binds the initial population size. If `parms` has
 zero rows, the result also has zero rows.
 }
 \examples{
-
+# a simple exponential growth model
+anexppop <- function(N0, b, d){
+  N1 <- N0 * (1 + b - d)
+  return(N1)
+}
+# make the input dataframe
+inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
+iterate(inputs, 23, anexppop)
 }

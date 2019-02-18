@@ -18,7 +18,14 @@
 #' @export
 #'
 #' @examples
-#'
+#' # a simple exponential growth model
+#' anexppop <- function(N0, b, d){
+#'   N1 <- N0 * (1 + b - d)
+#'   return(N1)
+#' }
+#' # make the input dataframe
+#' inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
+#' iterate(inputs, 23, anexppop)
 iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if (is.null(N0)) stop("must provide initial population")
   if (is.null(parms)) stop("must provide parameter data_frame")
@@ -60,20 +67,3 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
 }
 
-#' Exponential population growth
-#'
-#' A simple test function for the package. Deterministic exponential growth
-#' with independent parameters for births and deaths. Only projects one time step.
-#'
-#' @param N0 Initial population size
-#' @param b per capita birth rate
-#' @param d per capita death rate
-#' @param t time index, currently ignored.
-#'
-#' @return a single numeric value which is the next population size
-#' @export
-#'
-anexppop <- function(N0, b, d, t){
-  N1 <- N0 * (1 + b - d)
-  return(N1)
-}
