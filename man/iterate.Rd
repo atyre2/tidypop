@@ -37,4 +37,7 @@ anexppop <- function(N0, b, d){
 # make the input dataframe
 inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
 iterate(inputs, 23, anexppop)
+# time dependent model
+inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
+iterate(inputs, 23, anexppop)
 }

@@ -26,6 +26,10 @@
 #' # make the input dataframe
 #' inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
 #' iterate(inputs, 23, anexppop)
+#' # time dependent model
+#' inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
+#' iterate(inputs, 23, anexppop)
+
 iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
   if (is.null(N0)) stop("must provide initial population")
   if (is.null(parms)) stop("must provide parameter data_frame")
