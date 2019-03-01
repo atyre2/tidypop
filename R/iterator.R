@@ -28,7 +28,7 @@ iterate_pop <- function(N0 = NULL, parms = NULL, popfun = NULL){
   # Now we "loop" and calculate N for each time
   # pass N[,] as a matrix to accomodate
   for (i in seq_along(parms$t[-last_t])){
-    N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,])))
+    N[i+1,] <- do.call(popfun, c(N0=list(N[i,]), as.list(parms[i,])))
   }
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
