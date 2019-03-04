@@ -29,6 +29,10 @@ iterate_pop <- function(N0 = NULL, parms = NULL, popfun = NULL){
   # pass N[,] as a matrix to accomodate
   for (i in seq_along(parms$t[-last_t])){
     N[i+1,] <- do.call(popfun, c(N0=list(N[i,]), as.list(parms[i,])))
+    if (any(N[i+1,]< 0)){
+      set2zero <- N[i+1,] < 0
+      N[i+1, set2zero] <- 0
+    }
   }
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
