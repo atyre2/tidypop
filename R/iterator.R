@@ -49,7 +49,7 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
     # pass N[,] as a matrix to accomodate
     if (last_t > 1){
       for (i in 1:(last_t-1)){
-        N[i+1,] <- do.call(popfun, c(N0=N[i,], as.list(parms[i,popfunargs])))
+        N[i+1,] <- do.call(popfun, c(N0=list(N[i,]), as.list(parms[i,popfunargs])))
       }
 
     }
