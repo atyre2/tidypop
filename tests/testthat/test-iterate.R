@@ -73,3 +73,16 @@ test_that("OK with one row tibble",{
   expect_equal(nrow(iterate(N0=c(Population=10), parms = inputs5, popfun = testmodel2)), 1)
 }
 )
+
+inputs6 <- tibble::tibble(Year = 1961:1970,
+                          a11 = 0,
+                          a12 = 2,
+                          a21 = 0.5,
+                          a22 = 0.25)
+
+matrix_projection1 <- function(N0, a11, a12, a21, a22){
+  A <- matrix(c(a11, a21, a12, a22), nrow=2, ncol=2)
+  N1 <- A %*% N0
+  N1
+}
+iterate(parms = inputs6, N0 = c(juv=10, adult=20), popfun = matrix_projection1)
