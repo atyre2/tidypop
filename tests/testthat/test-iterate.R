@@ -85,4 +85,10 @@ matrix_projection1 <- function(N0, a11, a12, a21, a22){
   N1 <- A %*% N0
   N1
 }
-iterate(parms = inputs6, N0 = c(juv=10, adult=20), popfun = matrix_projection1)
+
+matrix1out <- iterate(parms = inputs6, N0 = c(juv=10, adult=20), popfun = matrix_projection1)
+#saveRDS(matrix1out, "inst/testdata/matrix1out")
+test_that("Matrix version works",{
+  expect_equal(unlist(matrix1out[2,6:7]), c(juv=40,adult=10))
+  expect_known_value(matrix1out, file = system.file("testdata","matrix1out", package = "tidypop"), update=FALSE)
+})
