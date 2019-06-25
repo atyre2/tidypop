@@ -1,15 +1,18 @@
 Package: tidypop
 Title: Tidy Interface to Single Species Population Models
-Version: 0.0.0.9001
+Version: 0.0.1.9000
 Authors@R: person("Drew", "Tyre", email = "atyre2@unl.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.5.1)
-License: MIT
+Description: Facilitate teaching simple single species population models in a tidy context, and provide a 'tidy' interface based on data frames to existing population packages.
+Depends: R (>= 3.5)
+URL: https://github.com/atyre2/tidypop
+BugReports: https://github.com/atyre2/tidypop/issues
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat
+    testthat,
+    covr
 Imports: 
     tibble,
     dplyr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
