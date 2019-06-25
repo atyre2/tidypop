@@ -8,7 +8,8 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    testthat
+    testthat,
+    covr
 Imports: 
     tibble,
     dplyr
