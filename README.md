@@ -8,11 +8,11 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/tidypop)](https://cran.r-project.org/package=tidypop)
 [![Travis build
-status](https://travis-ci.org/atyre2/tidypop.svg?branch=master)](https://travis-ci.org/atyre2/tidypop)
+status](https://travis-ci.com/atyre2/tidypop.svg?branch=dev)](https://travis-ci.com/atyre2/tidypop)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/atyre2/tidypop?branch=master&svg=true)](https://ci.appveyor.com/project/atyre2/tidypop)
+status](https://ci.appveyor.com/api/projects/status/github/atyre2/tidypop?branch=dev&svg=true)](https://ci.appveyor.com/project/atyre2/tidypop)
 [![Codecov test
-coverage](https://codecov.io/gh/atyre2/tidypop/branch/master/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=master)
+coverage](https://codecov.io/gh/atyre2/tidypop/branch/dev/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=dev)
 <!-- badges: end -->
 
 tidy interface to single species population models

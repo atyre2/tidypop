@@ -1,6 +1,6 @@
 Package: tidypop
 Title: Tidy Interface to Single Species Population Models
-Version: 0.0.0.9000
+Version: 0.0.1.9000
 Authors@R: person("Drew", "Tyre", email = "atyre2@unl.edu", role = c("aut", "cre"))
 Description: Facilitate teaching simple single species population models in a tidy context, and provide a 'tidy' interface based on data frames to existing population packages.
 Depends: R (>= 3.5)
