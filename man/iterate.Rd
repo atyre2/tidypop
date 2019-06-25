@@ -17,8 +17,8 @@ will be used in the returned tibble.}
 Must take at least N0 as an argument.}
 }
 \value{
-a data frame containing the input parameters and a column of projected population size.
-The return value will have the same class as parms
+A data frame containing the input parameters and a column of projected population size.
+The return value will have the same class as parms.
 }
 \description{
 Iterate a population model forward in time from an initial population vector.
