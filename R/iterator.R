@@ -50,6 +50,10 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
     if (last_t > 1){
       for (i in 1:(last_t-1)){
         N[i+1,] <- do.call(popfun, c(N0=list(N[i,]), as.list(parms[i,popfunargs])))
+        if (any(N[i+1,]< 0)){
+          set2zero <- N[i+1,] < 0
+          N[i+1, set2zero] <- 0
+        }
       }
 
     }
