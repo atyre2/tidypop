@@ -5,6 +5,12 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/tidypop)](https://cran.r-project.org/package=tidypop)
+[![Travis build
+status](https://travis-ci.org/atyre2/tidypop.svg?branch=master)](https://travis-ci.org/atyre2/tidypop)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/atyre2/tidypop?branch=master&svg=true)](https://ci.appveyor.com/project/atyre2/tidypop)
 <!-- badges: end -->
 
 tidy interface to single species population models
