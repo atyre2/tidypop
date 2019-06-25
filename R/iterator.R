@@ -60,6 +60,7 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
 
   } # last_t > 0
 
+
   if(!is.null(names(N0))){
     # fix column names here -- if done before do.call() c() concatenates colnames
     # in do.call()
