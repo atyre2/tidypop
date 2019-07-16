@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' # a simple exponential growth model
-#' anexppop <- function(N0, b, d){
+#' anexppop <- function(N0, b, d) {
 #'   N1 <- N0 * (1 + b - d)
 #'   return(N1)
 #' }
@@ -30,45 +30,42 @@
 #' # time dependent model
 #' inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
 #' iterate(inputs, 23, anexppop)
-
-iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
+iterate <- function(parms = NULL, N0 = NULL, popfun = NULL) {
   if (is.null(N0)) stop("must provide initial population")
   if (is.null(parms)) stop("must provide parameter data_frame")
   if (is.null(popfun)) stop("must provide population function")
   last_t <- nrow(parms)
   Ndim <- length(N0)
   popfunargs <- names(formals(popfun))
-  popfunargs <- popfunargs[popfunargs!="N0"] # remove N0
+  popfunargs <- popfunargs[popfunargs != "N0"] # remove N0
   # by stashing N in a matrix we enable structured pop'n models
   # I think.
   N <- matrix(0., nrow = last_t, ncol = Ndim)
-  if (last_t > 0){
+  if (last_t > 0) {
     # if parms empty, simply skip and return empty dataframe
-    N[1,] <- N0
+    N[1, ] <- N0
     # Now we "loop" and calculate N for each time
     # pass N[,] as a matrix to accomodate
-    if (last_t > 1){
-      for (i in 1:(last_t-1)){
-        N[i+1,] <- do.call(popfun, c(N0=list(N[i,]), as.list(parms[i,popfunargs])))
-        if (any(N[i+1,]< 0)){
-          warning("Some N at ", i+1, " were less than 0. Truncating to zero.")
-          set2zero <- N[i+1,] < 0
-          N[i+1, set2zero] <- 0
+    if (last_t > 1) {
+      for (i in 1:(last_t - 1)) {
+        N[i + 1, ] <- do.call(popfun, c(N0 = list(N[i, ]), as.list(parms[i, popfunargs])))
+        if (any(N[i + 1, ] < 0)) {
+          warning("Some N at ", i + 1, " were less than 0. Truncating to zero.")
+          set2zero <- N[i + 1, ] < 0
+          N[i + 1, set2zero] <- 0
         }
       }
-
     }
-
   } # last_t > 0
 
 
-  if(!is.null(names(N0))){
+  if (!is.null(names(N0))) {
     # fix column names here -- if done before do.call() c() concatenates colnames
     # in do.call()
     colnames(N) <- names(N0)
   } else {
     # no names, so default to N, N1, etc
-    if (Ndim==1){
+    if (Ndim == 1) {
       colnames(N) <- "N"
     } else {
       colnames(N) <- paste0("N", 1:Ndim)
@@ -77,4 +74,3 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL){
 
   return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
 }
-
