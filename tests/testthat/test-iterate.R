@@ -33,6 +33,13 @@ test_that("correct return for testmodel", {
                as.data.frame(testout))
 })
 
+parms2 <- tibble::tibble(t = 1:10, b = 0, d = 2)
+set2zero <- iterate(parms2, 1, testmodel)$N[2]
+test_that("negative population sizes truncated to zero",{
+  expect_gte(set2zero, 0)
+  expect_warning(iterate(parms2, 1, testmodel))
+})
+
 wb_inputs <- tibble::tibble(t = 1961:1966, b = 1.06411639, d = 1.)
 testout2 <- tibble::tribble(
   ~t,               ~b, ~d,      ~Population,
@@ -91,4 +98,14 @@ matrix1out <- iterate(parms = inputs6, N0 = c(juv=10, adult=20), popfun = matrix
 test_that("Matrix version works",{
   expect_equal(unlist(matrix1out[2,6:7]), c(juv=40,adult=10))
   expect_known_value(matrix1out, file = system.file("testdata","matrix1out", package = "tidypop"), update=FALSE)
+  expect_named(matrix1out, expected = c("Year", "a11", "a12", "a21", "a22", "juv", "adult"))
 })
+
+unnamed <- iterate(parms = inputs6, N0 = c(10, 20), popfun = matrix_projection1)
+test_that("Unnamed vectors work",{
+  expect_silent(iterate(parms = inputs6, N0 = c(10, 20), popfun = matrix_projection1))
+  expect_equivalent(as.matrix(unnamed[2,6:7]), as.matrix(matrix1out[2,6:7]))
+  expect_named(unnamed, expected = c("Year", "a11", "a12", "a21", "a22", "N1", "N2"))
+})
+
+names(unnamed)
