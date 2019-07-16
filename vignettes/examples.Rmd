@@ -1,0 +1,75 @@
+---
+title: "tidypop examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tidypop examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Demonstrate the use of `tidypop` for a range of ecological models, showing how 
+to include stochasticity, time dependence, and make plots.
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tidypop)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+# Exponential growth
+
+`tidypop` uses discrete time, but 
+[I think the distinction between exponential and geometric growth is meaningless](https://drewtyre.rbind.io/post/geometric-vs-exponential-growth-models-a-zombie-idea/).
+The formula for the model is
+$$
+N_{t+1} = N_{t}e^{r_t}
+$$
+and in code:
+```{r exponential1a}
+exppop <- function(N0, r){
+  N1 <- N0*exp(r)
+  return(N1)
+}
+```
+
+`tidypop::iterate()` needs a tibble or dataframe with one row for each timestep.
+The name is arbitrary, but I call it parms. There must be one column for each
+argument to `exppop()` other than `N0`. It can be useful for plotting to include
+some kind of label for each timestep.
+
+```{r exponential1b}
+parms <- tibble(t = 1:20, r = rep(0.05, 20))
+```
+
+With those two pieces we can now use iterate to add a column with the projected 
+population size called N. We also have to choose a starting population size.
+
+```{r exponential1c}
+results <- iterate(parms, 33, exppop)
+head(results)
+```
+
+Making a plot is very straightforward with ggplot
+
+```{r}
+ggplot(data = results,
+       mapping = aes(x = t, y = N)) +
+  geom_point()
+```
+
+or with base R
+
+```{r}
+plot(results$t, results$N)
+```
+
+
+`tidyr::crossing()` is very useful here
