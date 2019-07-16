@@ -68,8 +68,18 @@ ggplot(data = results,
 or with base R
 
 ```{r}
-plot(results$t, results$N)
+plot(N ~ t, data = results)
 ```
 
+That doesn't look very exciting, so let's add some environmental stochasticity.
 
-`tidyr::crossing()` is very useful here
+```{r}
+parms <- tibble(t = 1:20, r = rnorm(20, mean = 0.05, sd = 0.05))
+results <- iterate(parms = parms, N0 = 33, popfun = exppop) 
+ggplot(data = results,
+       mapping = aes(x = t, y = N)) +
+  geom_point()
+```
+
+Just one replicate of a stochastic model isn't very helpful so lets make some 
+replicates. `tidyr::crossing()` is very useful here.
