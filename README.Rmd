@@ -70,6 +70,16 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(tidypop)
-## basic example code
+# a simple exponential growth model
+anexppop <- function(N0, b, d){
+  N1 <- N0 * (1 + b - d)
+  return(N1)
+}
+# make the input dataframe
+inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
+iterate(inputs, 23, anexppop)
+# time dependent model
+inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
+iterate(inputs, 23, anexppop)
 ```
 

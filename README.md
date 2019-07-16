@@ -72,5 +72,33 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(tidypop)
-## basic example code
+# a simple exponential growth model
+anexppop <- function(N0, b, d){
+  N1 <- N0 * (1 + b - d)
+  return(N1)
+}
+# make the input dataframe
+inputs <- data.frame(Year = 2018:2025, b = 0.2, d = 0.15)
+iterate(inputs, 23, anexppop)
+#>   Year   b    d        N
+#> 1 2018 0.2 0.15 23.00000
+#> 2 2019 0.2 0.15 24.15000
+#> 3 2020 0.2 0.15 25.35750
+#> 4 2021 0.2 0.15 26.62538
+#> 5 2022 0.2 0.15 27.95664
+#> 6 2023 0.2 0.15 29.35448
+#> 7 2024 0.2 0.15 30.82220
+#> 8 2025 0.2 0.15 32.36331
+# time dependent model
+inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
+iterate(inputs, 23, anexppop)
+#>   Year         b    d        N
+#> 1 2018 0.2000000 0.15 23.00000
+#> 2 2019 0.1857143 0.15 24.15000
+#> 3 2020 0.1714286 0.15 25.01250
+#> 4 2021 0.1571429 0.15 25.54848
+#> 5 2022 0.1428571 0.15 25.73097
+#> 6 2023 0.1285714 0.15 25.54718
+#> 7 2024 0.1142857 0.15 24.99974
+#> 8 2025 0.1000000 0.15 24.10689
 ```
