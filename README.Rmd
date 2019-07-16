@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/tidypop)](https://cran.r-project.org/package=tidypop)
 [![Travis build status](https://travis-ci.org/atyre2/tidypop.svg?branch=master)](https://travis-ci.org/atyre2/tidypop)
 [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/atyre2/tidypop?branch=master&svg=true)](https://ci.appveyor.com/project/atyre2/tidypop)
-[![Codecov test coverage](https://codecov.io/gh/atyre2/tidypop/branch/dev/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=dev)
+[![Codecov test coverage](https://codecov.io/gh/atyre2/tidypop/branch/master/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=master)
 <!-- badges: end -->
 
 
@@ -79,3 +79,8 @@ inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
 iterate(inputs, 23, anexppop)
 ```
 
+## Contributing
+
+  Please note that the 'tidypop' project is released with a
+  [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md).
+  By contributing to this project, you agree to abide by its terms.

@@ -15,7 +15,7 @@ status](https://travis-ci.org/atyre2/tidypop.svg?branch=master)](https://travis-
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/atyre2/tidypop?branch=master&svg=true)](https://ci.appveyor.com/project/atyre2/tidypop)
 [![Codecov test
-coverage](https://codecov.io/gh/atyre2/tidypop/branch/dev/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=dev)
+coverage](https://codecov.io/gh/atyre2/tidypop/branch/master/graph/badge.svg)](https://codecov.io/gh/atyre2/tidypop?branch=master)
 <!-- badges: end -->
 
 tidy interface to single species population models
@@ -95,3 +95,9 @@ iterate(inputs, 23, anexppop)
 #> 7 2024 0.1142857 0.15 24.99974
 #> 8 2025 0.1000000 0.15 24.10689
 ```
+
+## Contributing
+
+Please note that the ‘tidypop’ project is released with a [Contributor
+Code of Conduct](.github/CODE_OF_CONDUCT.md). By contributing to this
+project, you agree to abide by its terms.

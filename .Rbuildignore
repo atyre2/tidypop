@@ -9,3 +9,5 @@
 ^data-raw$
 ^doc$
 ^Meta$
+^\.github$
+^\.covrignore$

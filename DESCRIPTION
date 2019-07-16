@@ -1,24 +1,32 @@
 Package: tidypop
 Title: Tidy Interface to Single Species Population Models
 Version: 0.0.1.9000
-Authors@R: person("Drew", "Tyre", email = "atyre2@unl.edu", role = c("aut", "cre"))
-Description: Facilitate teaching simple single species population models in a tidy context, and provide a 'tidy' interface based on data frames to existing population packages.
-Depends: R (>= 3.5)
+Authors@R: 
+    person(given = "Drew",
+           family = "Tyre",
+           role = c("aut", "cre"),
+           email = "atyre2@unl.edu")
+Description: Facilitate teaching simple single species
+    population models in a tidy context, and provide a 'tidy' interface
+    based on data frames to existing population packages.
+License: MIT + file LICENSE
 URL: https://github.com/atyre2/tidypop
 BugReports: https://github.com/atyre2/tidypop/issues
-License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5)
+Imports: 
+    dplyr,
+    tibble
+Suggests: 
+    covr,
+    ggplot2,
+    knitr,
+    purrr,
+    rmarkdown,
+    testthat,
+    tidyr
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
-Suggests: 
-    testthat,
-    covr,
-    knitr,
-    rmarkdown,
-    tidyr,
-    ggplot2,
-    purrr
-Imports: 
-    tibble,
-    dplyr
 RoxygenNote: 6.1.1
-VignetteBuilder: knitr
