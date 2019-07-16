@@ -11,3 +11,6 @@
 ^Meta$
 ^\.github$
 ^\.covrignore$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

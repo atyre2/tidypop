@@ -31,7 +31,7 @@ zero rows, the result also has zero rows.
 }
 \examples{
 # a simple exponential growth model
-anexppop <- function(N0, b, d){
+anexppop <- function(N0, b, d) {
   N1 <- N0 * (1 + b - d)
   return(N1)
 }

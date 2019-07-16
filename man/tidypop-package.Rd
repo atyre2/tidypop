@@ -6,7 +6,9 @@
 \alias{tidypop-package}
 \title{tidypop: Tidy Interface to Single Species Population Models}
 \description{
-Facilitate teaching simple single species population models in a tidy context, and provide a 'tidy' interface based on data frames to existing population packages.
+Facilitate teaching simple single species
+    population models in a tidy context, and provide a 'tidy' interface
+    based on data frames to existing population packages.
 }
 \seealso{
 Useful links:
