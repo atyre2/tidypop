@@ -6,3 +6,6 @@
 ^codecov\.yml$
 ^LICENSE\.md$
 ^codemeta\.json$
+^data-raw$
+^doc$
+^Meta$
