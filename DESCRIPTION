@@ -15,7 +15,8 @@ Suggests:
     knitr,
     rmarkdown,
     tidyr,
-    ggplot2
+    ggplot2,
+    purrr
 Imports: 
     tibble,
     dplyr

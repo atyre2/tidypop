@@ -22,6 +22,7 @@ library(tidypop)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(purrr)
 ```
 
 # Exponential growth
@@ -71,15 +72,178 @@ or with base R
 plot(N ~ t, data = results)
 ```
 
-That doesn't look very exciting, so let's add some environmental stochasticity.
+## Stochasticity
 
-```{r}
-parms <- tibble(t = 1:20, r = rnorm(20, mean = 0.05, sd = 0.05))
-results <- iterate(parms = parms, N0 = 33, popfun = exppop) 
-ggplot(data = results,
-       mapping = aes(x = t, y = N)) +
-  geom_point()
+To demonstrate how to add stochasticity using `tidypop`, I will use some real data to 
+start with.
+
+```{r griz_setup}
+
+grizzly <- data.frame(Year = 1976:2007,
+                      N=c(33, 36, 34, 39, 35, 34, 38, 36, 37, 41, 39, 51, 47, 57, 48, 60, 65,
+74, 69, 65, 57, 70, 81, 99, 99, 105, 112, 131, 132, 139, 118, 127))
+```
+These data are a 3-yr running sum of the numbers of
+unduplicated grizzly bear females observed with cubs-of-the-year,
+1973-2006, in the greater Yellowstone ecosystem (Table 4 from Schwartz,
+C.C., M. A. Haroldson, and K. West, eds. 2006. Yellowstone grizzly
+bear investigations: annual report of the Interagency Grizzly Bear
+Study Team, 2006. US Geological Survey, Bozeman, Montana, USA). First observation is sum of 1973-74-75 counts, second is 1974-75-76, etc.
+Compare with Table 3 of Dennis and Taper (1994), which ends at 1991 and
+used an unofficial count for 1990 reported by IGBST via phone. Obtained from [Brian Dennis' website on May 13, 2017.](http://www.webpages.uidaho.edu/~brian/reprints/density_dependence_PBLR_test.pdf)
+
+
+```{r introplot, echo=FALSE}
+ggplot(grizzly, aes(x = Year, y = N)) + 
+  geom_point() + 
+  xlab("Year") + ylab("3 year running sum of females with cubs") 
 ```
 
-Just one replicate of a stochastic model isn't very helpful so lets make some 
-replicates. `tidyr::crossing()` is very useful here.
+There are 3 sources of variability here: sampling error in population estimation, environmental stochasticity, and demographic stochasticity.
+
+### Sampling error - Epistemic uncertainty
+
+Sampling error means that our estimate of the average rate of growth is uncertain, that is, $\bar{r}$ is a random variable with some variance. One way we can proceed is to assume that *all* of the variation in the graph is sampling error. There is one true value of $r$ at all times, but we don't know what it is. 
+So, calculate the per capita rate of population growth for all years, and calculate the mean and standard error. 
+$$
+r_t = log\left(\frac{n_{t+1}}{n_t}\right)
+$$
+ 
+```{r, include=answer}
+grizzly <- mutate(grizzly,
+       r = log(lead(N)/N))
+sumry_griz <- summarize(grizzly,
+          rbar = mean(r, na.rm = TRUE),
+          r_se = sd(r, na.rm=TRUE)/sqrt(n()-1)) 
+# test it out -- assumes you saved summary stats in data_frame called sumry_griz
+parms <- tibble(t = 1976:2007,
+                r = sumry_griz$rbar)
+head(iterate(parms = parms, N0 = 33, popfun = exppop))
+```
+
+We need to run the model with many different values of $r$, sampled from the distribution of uncertainty we have for $\bar{r}$.
+
+```{r}
+nyears <- length(1976:2007)
+bigparms <- tibble(
+  t = rep(1976:2007, times = 100),
+                  r = rep(rnorm(100, sumry_griz$rbar, sumry_griz$r_se), each = nyears)
+                  )
+# split() breaks up a dataframe according to the values of f, into a list of smaller dataframe
+# map_dfr() is a new function
+# map_dfr() is like map but already glues results back into a data frame
+bigresults <- split(bigparms, f = bigparms$r) %>% 
+  map_dfr(~iterate(parms = ., N0=c(N = 33), popfun = exppop), .id = "rep")
+
+# plot them all
+ggplot(data = grizzly,
+       mapping = aes(x = Year, y=N)) + 
+  geom_line(data = bigresults,
+            mapping = aes(x = t, y = N, group=rep),
+            alpha = 0.25) + 
+  geom_point() 
+
+```
+
+### Environmental stochasticity
+
+We could also assume that all the variation in the graph is caused by variation in birth and death rates between years. Now we also draw random samples of $r$, but we get a new value for each year, and pass that to our model as a vector. 
+
+```{r}
+lotsofr <- tibble(rep = rep(1:100, each=nyears),
+                  t = rep(1976:2007, times = 100),
+                  r = rnorm(100*nyears, sumry_griz$rbar, sumry_griz$r_se))
+
+bigresults2 <- split(lotsofr, f = lotsofr$rep) %>% 
+  map(~select(., -rep)) %>% #awkward, sorry
+  map_dfr(~iterate(N0=c(N = 33), parms = ., popfun = exppop), .id = "rep")
+
+# plot them all
+ggplot(data = grizzly,
+       mapping = aes(x = Year, y=N)) + 
+  geom_line(data = bigresults2,
+            mapping = aes(x = t, y = N, group=rep),
+            alpha = 0.25) + 
+  geom_point() 
+```
+ 
+## Demographic stochasticity
+
+Demographic stochasticity requires more work, because within our function we have to randomly choose how many
+individuals live, die, and give birth. We assume births happen before deaths. 
+
+$$
+\begin{aligned}
+N_{t+1} = & N_{t} + bN_{t}- dN_{t} \\
+N_{t+1} = & N_{t}(1 + b - d) \\
+N_{t+1} = & N_{t}\lambda = N_{t}e^{r}
+\end{aligned}
+$$
+
+Here $\lambda$ is the ratio of population size between two times. $log(\lambda) = r$, the intrinsic population growth rate. We will use the first version of the equation, because we want to manipulate $b$ and $d$ separately. 
+Births will occur with a Poisson distribution with
+mean b*N. Deaths are binomial and occur with a probability $1-e^{-d}$[^1]. 
+
+```{r}
+stch_exppop <- function(N0 = 10, t, b = 0.2, d = 0.1){
+  births <- rpois(1, b*N0)
+  deaths <- rbinom(1, N0, 1-exp(-d))
+  N1 <- N0 + births - deaths
+  return(N1)
+}
+```
+
+We can get the mean correct by remembering that $b-d = r$. Before we assumed that $d = 0$, but now we have to 
+have a value bigger than zero (more realistic). The average trajectory will be unaffected by the values we pick, 
+as long as the difference is `r paste0("$\\bar{r} = ", format(sumry_griz$rbar, digits=3), "$")`
+but the variance will change. If we choose $d = 0.2$ then 
+`r paste0("$b = ", format(sumry_griz$rbar+0.2, digits=3), "$")`.
+
+```{r}
+bigparms2 <- tibble(rep = rep(1:100, each = nyears),
+                   t = rep(1976:2007, times = 100),
+                   b = 0.2+sumry_griz$rbar,
+                   d = 0.2)
+# split() breaks up a dataframe according to the values of f, into a list of smaller dataframe
+# map_dfr() is a new function
+# map_dfr() is like map but already glues results back into a data frame
+bigresults2 <- split(bigparms2, f = bigparms2$rep) %>% 
+  map(~select(., -rep)) %>% 
+  map_dfr(~iterate(N0=c(N = 33), parms = ., popfun = stch_exppop), .id = "rep")
+
+# plot them all
+ggplot(data = grizzly,
+       mapping = aes(x = Year, y=N)) + 
+  geom_line(data = bigresults2,
+            mapping = aes(x = t, y = N, group=rep),
+            alpha = 0.25) + 
+  geom_point() 
+
+```
+
+That looks like the mean is maybe a bit high. Let's check.
+
+```{r}
+bigresults2 %>% 
+  group_by(rep) %>% 
+  mutate(r = log(lead(N)/N)) %>% 
+  summarize(rbar = mean(r, na.rm = TRUE),
+            r_se = sd(r, na.rm = TRUE)/(n()-1)) %>% 
+  ggplot() + geom_histogram(mapping = aes(x = rbar), binwidth = 0.01) + 
+  geom_vline(xintercept = sumry_griz$rbar, color = "red", linetype=2)
+```
+
+So it is a bit high. That's probably because of "non-linear averaging".
+
+```{r}
+nla <- tibble(r = seq(0.0, 0.1, 0.001),
+              N32 = 33*exp(r*32))
+ggplot(nla,
+       mapping = aes(x = r, y = N32)) + geom_line()
+```
+
+Population size as a function of *r* is concave up, so if *r* is varying randomly, the average of the growth rates 
+is higher than the growth at the average rate. The variation induced by our demographic stochastic model might be too high as well. 
+
+[^1]: Deriving that is a bit complicated. $d$ is the death rate in continuous time. The probability of 0 deaths in
+an interval of time is $p(deaths = 0) = e^{-d}$, which is the zero term of a Poisson distribution. We need the probability of at least 1 death so $p(death > 0) = 1 - e^{-d}$ by the law of total probability.
