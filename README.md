@@ -52,18 +52,11 @@ with one row per time step.
 
 tidypop is not available from [CRAN](https://CRAN.R-project.org)
 
-but you can install the stable version from
-[GitHub](https://github.com/) with:
+but you can install from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("atyre2/tidypop")
-```
-
-or the development version with
-
-``` r
-devtools::install_github("atyre2/tidypop@dev")
 ```
 
 ## Example
