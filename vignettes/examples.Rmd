@@ -72,7 +72,7 @@ or with base R
 plot(N ~ t, data = results)
 ```
 
-## Stochasticity
+# Stochasticity
 
 To demonstrate how to add stochasticity using `tidypop`, I will use some real data to 
 start with.
@@ -101,7 +101,7 @@ ggplot(grizzly, aes(x = Year, y = N)) +
 
 There are 3 sources of variability here: sampling error in population estimation, environmental stochasticity, and demographic stochasticity.
 
-### Sampling error - Epistemic uncertainty
+## Sampling error - Epistemic uncertainty
 
 Sampling error means that our estimate of the average rate of growth is uncertain, that is, $\bar{r}$ is a random variable with some variance. One way we can proceed is to assume that *all* of the variation in the graph is sampling error. There is one true value of $r$ at all times, but we don't know what it is. 
 So, calculate the per capita rate of population growth for all years, and calculate the mean and standard error. 
@@ -109,7 +109,7 @@ $$
 r_t = log\left(\frac{n_{t+1}}{n_t}\right)
 $$
  
-```{r, include=answer}
+```{r}
 grizzly <- mutate(grizzly,
        r = log(lead(N)/N))
 sumry_griz <- summarize(grizzly,
@@ -145,7 +145,7 @@ ggplot(data = grizzly,
 
 ```
 
-### Environmental stochasticity
+## Environmental stochasticity
 
 We could also assume that all the variation in the graph is caused by variation in birth and death rates between years. Now we also draw random samples of $r$, but we get a new value for each year, and pass that to our model as a vector. 
 
@@ -244,6 +244,54 @@ ggplot(nla,
 
 Population size as a function of *r* is concave up, so if *r* is varying randomly, the average of the growth rates 
 is higher than the growth at the average rate. The variation induced by our demographic stochastic model might be too high as well. 
+
+## Structured Population Models
+
+The argument N0 can be specified as a vector, enabling us to use structured population models. 
+I will use some matrices calculated from some data for helmeted honeyeaters.
+![Helmeted Honeyeater threat display. Image by Trent Browning](images/HH-sqwak-threat-spec-web620.jpg)
+
+This bird is critically endangered, restricted to 3 small populations just east of Melbourne. Zoos Victoria contributes to conservation by captive rearing individuals to supplement wild populations, as well as maintaining a captive population "lifeboat" for the species. The matrices are stored in a list `hh_A`, and the associated population
+vectors are in `hh_N`. 
+
+```{r}
+big_list_matrices <- tibble(t = 1:20,
+                            A = sample(hh_A, 20, replace=TRUE)) # pick a matrix randomly 20 times
+# make the projections using matrix multiplication
+stoch_proj <- function(N0, A, t){
+  N1 <- A[[1]] %*% N0 # the [[1]] extracts the matrix from the list
+  return(N1)
+}
+onerep <- iterate(parms = big_list_matrices, N0 = hh_N$N1991, popfun = stoch_proj)
+stoch_summary <- onerep %>%
+  gather(key = "ageclass", value = "N", 3:12) %>% # stack up the population sizes in each year
+  group_by(t) %>%
+  summarize(N=sum(N)) # reduce to one row per year
+ggplot(stoch_summary, aes(x=t, y=N)) + geom_line()
+
+```
+
+This works because we've stored the matrices in a list-column of the dataframe parms. We can do 
+replicates as well.
+
+```{r}
+big_list_matrices <- tibble(t = rep(1:20, time = 10),
+                            rep = rep(1:10, each = 20),
+                            # pick a matrix randomly 20 times
+                            A = sample(hh_A, 200, replace=TRUE)) %>%  
+  nest(-rep) # create a list of dataframes, one per rep defaults to name data
+  
+manyreps <- big_list_matrices %>% 
+  # we've used map() and friends before, runs our model with each element of a list
+  mutate(data = map(data, function(X) iterate(N0 = hh_N$N1991, parms = X, popfun = stoch_proj))) %>% 
+  unnest() # pop everything back out of the list of dataframes
+
+stoch_summary <- manyreps %>%
+  gather(key = "ageclass", value = "N", 4:13) %>% # stack up the population sizes in each year
+  group_by(t, rep) %>%
+  summarize(N=sum(N)) # reduce to one row per year
+ggplot(stoch_summary, aes(x=t, y=N, group=rep)) + geom_line()
+```
 
 [^1]: Deriving that is a bit complicated. $d$ is the death rate in continuous time. The probability of 0 deaths in
 an interval of time is $p(deaths = 0) = e^{-d}$, which is the zero term of a Poisson distribution. We need the probability of at least 1 death so $p(death > 0) = 1 - e^{-d}$ by the law of total probability.
