@@ -2,9 +2,21 @@
 % Please edit documentation in R/iterator.R
 \name{iterate}
 \alias{iterate}
+\alias{iterate.tbl_df}
+\alias{iterate.data.frame}
+\alias{iterate.NULL}
+\alias{iterate.default}
 \title{Iterate a population model}
 \usage{
-iterate(parms = NULL, N0 = NULL, popfun = NULL)
+iterate(...)
+
+\method{iterate}{tbl_df}(parms = NULL, N0 = NULL, popfun = NULL)
+
+\method{iterate}{data.frame}(parms = NULL, N0 = NULL, popfun = NULL)
+
+\method{iterate}{NULL}(...)
+
+\method{iterate}{default}(...)
 }
 \arguments{
 \item{parms}{a data frame containing the parameters of the model. Must have

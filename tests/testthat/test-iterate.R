@@ -1,9 +1,9 @@
 context("test-iterate.R")
 parms <- tibble::tibble(t = 1:10, b = 0.2, d = 0.1)
 test_that("inputs checked out", {
-  expect_error(iterate(), "must provide initial population")
-  expect_error(iterate(N0 = 10), "must provide parameter data_frame")
-  expect_error(iterate(N0 = 10, parms = parms), "must provide population function")
+  expect_error(iterate(), "iterate() requires input parameters. See ?iterate for details.")
+  expect_error(iterate(N0 = 10), "default method for iterate() not yet implemented.")
+  expect_error(iterate(N0 = 10, parms = parms), "default method for iterate() not yet implemented.")
 })
 
 testmodel <- function(N0, b, d) {
@@ -54,7 +54,7 @@ testout2 <- tibble::tribble(
 
 test_that("correct return for testmodel 2", {
   expect_equal(
-    as.data.frame(iterate(N0 = c(Population = 10), parms = wb_inputs, popfun = testmodel)),
+    as.data.frame(iterate(parms = wb_inputs, N0 = c(Population = 10), popfun = testmodel)),
     as.data.frame(testout2)
   )
 })
@@ -69,19 +69,19 @@ testmodel2 <- function(N0) {
 
 test_that("OK with only N0", {
   expect_equal(
-    as.data.frame(iterate(N0 = c(Population = 10), parms = inputs3, popfun = testmodel2)),
+    as.data.frame(iterate(parms = inputs3, N0 = c(Population = 10), popfun = testmodel2)),
     as.data.frame(testout2[, c(1, 4)])
   )
 })
 
 inputs4 <- tibble::tibble()
 test_that("OK with empty tibble", {
-  expect_equal(nrow(iterate(N0 = c(Population = 10), parms = inputs4, popfun = testmodel2)), 0)
+  expect_equal(nrow(iterate(parms = inputs4, N0 = c(Population = 10), popfun = testmodel2)), 0)
 })
 
 inputs5 <- tibble::tibble(Year = 1961)
 test_that("OK with one row tibble", {
-  expect_equal(nrow(iterate(N0 = c(Population = 10), parms = inputs5, popfun = testmodel2)), 1)
+  expect_equal(nrow(iterate(parms = inputs5, N0 = c(Population = 10), popfun = testmodel2)), 1)
 })
 
 inputs6 <- tibble::tibble(
@@ -113,4 +113,4 @@ test_that("Unnamed vectors work", {
   expect_named(unnamed, expected = c("Year", "a11", "a12", "a21", "a22", "N1", "N2"))
 })
 
-names(unnamed)
+

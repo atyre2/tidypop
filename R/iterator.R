@@ -30,9 +30,13 @@
 #' # time dependent model
 #' inputs <- data.frame(Year = 2018:2025, b = seq(0.2, 0.1, length = 8), d = 0.15)
 #' iterate(inputs, 23, anexppop)
-iterate <- function(parms = NULL, N0 = NULL, popfun = NULL) {
+iterate <- function(...) UseMethod("iterate")
+
+#' @export
+#' @rdname iterate
+iterate.tbl_df <- function(parms = NULL, N0 = NULL, popfun = NULL) {
   if (is.null(N0)) stop("must provide initial population")
-  if (is.null(parms)) stop("must provide parameter data_frame")
+  if (is.null(parms)) stop("must provide parameter parms")
   if (is.null(popfun)) stop("must provide population function")
   last_t <- nrow(parms)
   Ndim <- length(N0)
@@ -73,4 +77,25 @@ iterate <- function(parms = NULL, N0 = NULL, popfun = NULL) {
   } # end check names
 
   return(dplyr::bind_cols(parms, tibble::as_tibble(N)))
+}
+
+#' @export
+#' @rdname iterate
+iterate.data.frame <- function(parms = NULL, N0 = NULL, popfun = NULL) {
+  parms <- tibble::as_tibble(parms)
+  result <- iterate(parms, N0, popfun)
+  return(as.data.frame(result))
+}
+
+
+#' @export
+#' @rdname iterate
+iterate.NULL <- function(...) {
+  stop("iterate() requires input parameters. See ?iterate for details.")
+}
+
+#' @export
+#' @rdname iterate
+iterate.default <- function(...) {
+  stop("default method for iterate() not yet implemented.")
 }
