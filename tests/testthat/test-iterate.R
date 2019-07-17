@@ -1,9 +1,9 @@
 context("test-iterate.R")
 parms <- tibble::tibble(t = 1:10, b = 0.2, d = 0.1)
 test_that("inputs checked out", {
-  expect_error(iterate(), "iterate() requires input parameters. See ?iterate for details.")
-  expect_error(iterate(N0 = 10), "default method for iterate() not yet implemented.")
-  expect_error(iterate(N0 = 10, parms = parms), "default method for iterate() not yet implemented.")
+  expect_error(iterate(), "iterate\\(\\) requires input parameters\\. See \\?iterate for details\\.")
+  expect_error(iterate(N0 = 10), "default method for iterate\\(\\) not yet implemented\\.")
+  expect_error(iterate(N0 = 10, parms = parms), "default method for iterate\\(\\) not yet implemented\\.")
 })
 
 testmodel <- function(N0, b, d) {
