@@ -156,7 +156,7 @@ lotsofr <- tibble(rep = rep(1:100, each=nyears),
 
 bigresults2 <- split(lotsofr, f = lotsofr$rep) %>% 
   map(~select(., -rep)) %>% #awkward, sorry
-  map_dfr(~iterate(N0=c(N = 33), parms = ., popfun = exppop), .id = "rep")
+  map_dfr(~iterate(parms = ., N0=c(N = 33), popfun = exppop), .id = "rep")
 
 # plot them all
 ggplot(data = grizzly,
@@ -209,7 +209,7 @@ bigparms2 <- tibble(rep = rep(1:100, each = nyears),
 # map_dfr() is like map but already glues results back into a data frame
 bigresults2 <- split(bigparms2, f = bigparms2$rep) %>% 
   map(~select(., -rep)) %>% 
-  map_dfr(~iterate(N0=c(N = 33), parms = ., popfun = stch_exppop), .id = "rep")
+  map_dfr(~iterate(parms = ., N0=c(N = 33), popfun = stch_exppop), .id = "rep")
 
 # plot them all
 ggplot(data = grizzly,
@@ -248,6 +248,28 @@ is higher than the growth at the average rate. The variation induced by our demo
 ## Structured Population Models
 
 The argument N0 can be specified as a vector, enabling us to use structured population models. 
+The projection matrix $A$ needs to be stored in a list-column of the input parameters. So
+
+```{r}
+# create the projection matrix
+A <- matrix(c(0, 0, 1,
+              0.75, 0, 0,
+              0, 0.9, 0.9), nrow = 3, byrow = TRUE)
+# store it in the tibble as a replicated list
+inputs <- tibble(t = 1:20,
+                 A = rep(list(A), 20))
+
+# create the one line function
+project_matrix <- function(N0, A){
+  # need to add [[1]] to "unlist" A
+  A[[1]] %*% N0  # matrix multiply and return result
+}
+head(iterate(inputs, N0 = c(1,1,1), project_matrix))
+```
+
+
+### Stochastic projection matrices
+
 I will use some matrices calculated from some data for helmeted honeyeaters.
 ![Helmeted Honeyeater threat display. Image by Trent Browning](images/HH-sqwak-threat-spec-web620.jpg)
 
@@ -283,7 +305,7 @@ big_list_matrices <- tibble(t = rep(1:20, time = 10),
   
 manyreps <- big_list_matrices %>% 
   # we've used map() and friends before, runs our model with each element of a list
-  mutate(data = map(data, function(X) iterate(N0 = hh_N$N1991, parms = X, popfun = stoch_proj))) %>% 
+  mutate(data = map(data, function(X) iterate(parms = X, N0 = hh_N$N1991, popfun = stoch_proj))) %>% 
   unnest() # pop everything back out of the list of dataframes
 
 stoch_summary <- manyreps %>%

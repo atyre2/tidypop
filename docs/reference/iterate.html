@@ -124,7 +124,19 @@ Parameters of the model can vary with time.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>iterate</span>(<span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>N0</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>popfun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>iterate</span>(<span class='no'>...</span>)
+
+<span class='co'># S3 method for tbl_df</span>
+<span class='fu'>iterate</span>(<span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>N0</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>popfun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for data.frame</span>
+<span class='fu'>iterate</span>(<span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>N0</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>popfun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for NULL</span>
+<span class='fu'>iterate</span>(<span class='no'>...</span>)
+
+<span class='co'># S3 method for default</span>
+<span class='fu'>iterate</span>(<span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,7 +172,7 @@ zero rows, the result also has zero rows.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># a simple exponential growth model</span>
-<span class='no'>anexppop</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>N0</span>, <span class='no'>b</span>, <span class='no'>d</span>){
+<span class='no'>anexppop</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>N0</span>, <span class='no'>b</span>, <span class='no'>d</span>) {
   <span class='no'>N1</span> <span class='kw'>&lt;-</span> <span class='no'>N0</span> * (<span class='fl'>1</span> + <span class='no'>b</span> - <span class='no'>d</span>)
   <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/function'>return</a></span>(<span class='no'>N1</span>)
 }
