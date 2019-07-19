@@ -10,16 +10,20 @@
 \usage{
 iterate(...)
 
-\method{iterate}{tbl_df}(parms = NULL, N0 = NULL, popfun = NULL)
+\method{iterate}{tbl_df}(parms = NULL, N0 = NULL, popfun = NULL, ...)
 
-\method{iterate}{data.frame}(parms = NULL, N0 = NULL, popfun = NULL)
+\method{iterate}{data.frame}(parms = NULL, N0 = NULL, popfun = NULL,
+  ...)
 
 \method{iterate}{NULL}(...)
 
 \method{iterate}{default}(...)
 }
 \arguments{
-\item{parms}{a data frame containing the parameters of the model. Must have
+\item{...}{(not yet implemented) numeric vectors with names matching the
+arguments of popfun}
+
+\item{parms}{a data frame or tibble containing the parameters of the model. Must have
 one row for each time step.}
 
 \item{N0}{a numeric vector of the initial population size. If named, these names
@@ -29,7 +33,7 @@ will be used in the returned tibble.}
 Must take at least N0 as an argument.}
 }
 \value{
-A data frame containing the input parameters and a column of projected population size.
+A data frame or tibble containing the input parameters and a column of projected population size.
 The return value will have the same class as parms.
 }
 \description{
