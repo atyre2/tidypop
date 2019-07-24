@@ -1,0 +1,130 @@
+---
+title: "metapopulations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{metapopulations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library("tidyverse")
+library("tidypop")
+```
+
+# What is a metapopulation?
+
+Metapopulation ecology remains one of the most dynamic and active areas of population ecology - both applied and theoretical! A metapopulation is a spatially structured population. What does that
+mean?
+
+1.	Just like with an age-structured population, in which vital rates can vary by age or stage, vital rates can vary over space. Some areas might have better habitat, with higher overall population growth rates! On the other hand, some areas might have poor habitat -- and these areas may be associated with lower vital rates.
+2.	Now that we are thinking about animals living in particular areas in space, we need to start thinking about movement. In a metapopulation, we often think about dispersal among populations.
+
+In metapopulation ecology, we are generally considering a landscape with a certain number of habitable patches. Each patch may or may not be occupied by a population. Generally these populations are connected via some dispersal. Although the term "metapopulation" is often used to refer to models where we don’t care about abundance (we only care about occupancy, or $N > 0$), we could track patch abundance in a metapopulation model if we really want to. In fact, if we want, each patch can contain a stage-structured, density dependent population. With those models we can study regional abundance and regional abundance trends. Incorporating patch dynamics explicitly is beyond the scope of this course. Hence, we focus on occupancy models.  
+
+The "classical" metapopulation concept was first introduced by Richard Levins in 1969, and further developed by Ilkka Hanski. In a classical metapopulation, patches are either occupied (coded as
+1) or not (coded as 0). We don’t think about population dynamics any more – instead we think only about metapopulation dynamics. That is, how the number of occupied patches (or the fraction of patches occupied) changes over time. A metapopulation grows when the number of occupied patches increases via colonization which is the process of a patch transitioning from unoccupied to occupied.  A metapopulation shrinks when the number of occupied patches decreases via local extinction which is the process of a patch transitioning from occupied to unoccupied. 
+
+Package MetaLandSim handles many details of these models for us.
+
+```{r}
+library("MetaLandSim")
+# create a random landscape with 5 2 ha patches
+rl5 <- createLandscape()
+plot(rl5)
+```
+
+Change the number of patches by specifying an argument Npatch.
+
+```{r}
+rl10 <- createLandscape(list(Npatch = 10))
+```
+
+We can also change how variable patchsize is. This parameter has units of hectares,
+and is the standard deviation of a normal distribution. So most patches will 
+fall between areaM - 2*areaSD and areaM + 2*SD.
+
+```{r}
+# default variation is 0.2
+rl10b <- createLandscape(list(Npatch = 10, areaSD = 1))
+plot(rl10b) #some small and large patches
+```
+
+Some of these patches are overlapping.
+
+Next, we want to simulate how the occupancy of patches in the landscape changes over time. 
+(a) First, we save a random landscape in an R-object called r1 
+(b) Then we randomly assign which of the patches are occupied and which are not
+(c) Next we load the following model parameters: 
+	$\alpha = 0.001$ - Parameter relating extinction with distance
+(larger values  shorter dispersal distance)
+	y = 2 - Parameter y in the colonization probability 
+(larger value  smaller colonization probability)
+	e = 0.047 - Parameter defining the extinction probability in a patch of unit area
+(larger value  larger extinction probability)
+	x  = 0.5 - Parameter scaling extinction risk with patch area
+(larger value  smaller extinction probability)
+Relevant formulas: 
+Dispersal kernel	 $D = e^{-\alpha distance}$
+Extinction		E=e/(A^x), where A is area
+Colonization	C=s^2/(s^2+y^2), where s is the connectivity of a given patch
+
+
+(d) Finally we run a stochastic model predicting the change in occupancy from one time step to the next.
+
+
+# (parm=50 specifies occupancy of 50%)
+sp_t0 <- species.graph(rl=r1, method="percentage",
+                       parm=50, nsew="none", plotG=TRUE)
+
+# Create data frame for the stochastic occupancy model set
+dat=data.frame(row.names=c("alpha","x","y","e"), par_output=c(0.001,0.5,2,0.04662827))
+
+# runs stochastic occupancy model 
+sp_t1 <- spom(sp= sp_t0, kern="op1", conn="op1", colnz="op1", ext="op1",
+                param_df=dat, beta1=NULL, b=1, c1=NULL, 
+                c2=NULL, z=NULL, R=NULL)
+
+#look at the results
+sp_t1$nodes.characteristics[,c(4,7:11)]
+Step 4: Now we simulate patch dynamics over 100 years and redo the procedure for 100 times. 
+We will perform the simulation using use the function Iterate.graph.
+Check out the arguments of the function by typing 
+? iterate.graph
+Then run the iteration and store the results in the r-object it1. Note, on my home computer this iteration takes over two minutes to run. Type
+it1 <- iterate.graph(iter = 100, mapsize = 1000, 
+                     dist_m = 30, areaM = 0.5, 
+                     areaSD= 0.01, Npatch = 50, 
+                     disp = 30, span = 100, 
+                     par1 = "none", par2 = 2, par3 = 2, 
+                     method = "percentage", parm = 50,
+                     nsew = "none", succ = "none", 
+                     param_df = dat,
+                     kern = "op1", conn = "op1", colnz = "op1",
+                     ext = "op1", b = 1, graph = FALSE )
+
+The following commands gives you the mean and SD occupancy (%) predicted after 100 years (from 100 randomly created starting landscapes).
+
+it1$occupancy[100,]$mean
+it1$occupancy[100,]$SD
+Step 5 Now we explore the effect of different landscapes
+Use the model to fill out the following table. Each group member runs one parameter combination, and shares the results with the rest of the class.
+
+Number of patches	Mean habitat area in ha	Occupancy in %
+		Mean	SD
+50	0.5 (SD=0.1)		
+5	0.5 (SD=0.1)		
+50	0.1 (SD=0.01)		
+40	0.1 (SD=0.01)		
+30	0.1 (SD=0.01)		
+Step 6: Answer the following question:
+Based on the simulation results, what conclusions can you make? If you would make decisions on your ideal reserve design by considering the number and size distribution of patches (all small, all large, a mix of small and large)?
+
+, and the dispersal distance.

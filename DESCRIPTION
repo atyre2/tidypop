@@ -16,7 +16,8 @@ Depends:
     R (>= 3.3)
 Imports: 
     dplyr,
-    tibble
+    tibble,
+    MetaLandSim
 Suggests: 
     covr,
     ggplot2,
