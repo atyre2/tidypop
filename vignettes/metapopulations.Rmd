@@ -44,7 +44,8 @@ plot(rl5)
 Change the number of patches by specifying an argument Npatch.
 
 ```{r}
-rl10 <- createLandscape(list(Npatch = 10))
+rl10 <- createLandscape(Npatch = 10)
+plot(rl10)
 ```
 
 We can also change how variable patchsize is. This parameter has units of hectares,
@@ -52,8 +53,8 @@ and is the standard deviation of a normal distribution. So most patches will
 fall between areaM - 2*areaSD and areaM + 2*SD.
 
 ```{r}
-# default variation is 0.2
-rl10b <- createLandscape(list(Npatch = 10, areaSD = 1))
+# default variation is 0.2 ha, mean is 2 ha
+rl10b <- createLandscape(Npatch = 10, areaSD = 1)
 plot(rl10b) #some small and large patches
 ```
 
