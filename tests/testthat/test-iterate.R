@@ -38,7 +38,7 @@ parms2 <- tibble::tibble(t = 1:10, b = 0, d = 2)
 # set2zero <- iterate(parms2, 1, testmodel)$N[2]
 test_that("negative population sizes truncated to zero", {
   #  expect_gte(set2zero, 0)
-  expect_warning(iterate(parms2, 1, testmodel))
+  expect_warning(iterate(parms2, 1, testmodel, verbosity = 1))
 })
 
 wb_inputs <- tibble::tibble(t = 1961:1966, b = 1.06411639, d = 1.)

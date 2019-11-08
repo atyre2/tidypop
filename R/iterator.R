@@ -36,7 +36,7 @@ iterate <- function(...) UseMethod("iterate")
 
 #' @export
 #' @rdname iterate
-iterate.tbl_df <- function(parms = NULL, N0 = NULL, popfun = NULL, ...) {
+iterate.tbl_df <- function(parms = NULL, N0 = NULL, popfun = NULL, verbosity = 0, ...) {
   if (is.null(N0)) stop("must provide initial population")
   if (is.null(parms)) stop("must provide parameter parms")
   if (is.null(popfun)) stop("must provide population function")
@@ -56,7 +56,7 @@ iterate.tbl_df <- function(parms = NULL, N0 = NULL, popfun = NULL, ...) {
       for (i in 1:(last_t - 1)) {
         N[i + 1, ] <- do.call(popfun, c(N0 = list(N[i, ]), as.list(parms[i, popfunargs])))
         if (any(N[i + 1, ] < 0)) {
-          warning("Some N at ", i + 1, " were less than 0. Truncating to zero.")
+          if (verbosity > 0) warning("Some N at ", i + 1, " were less than 0. Truncating to zero.")
           set2zero <- N[i + 1, ] < 0
           N[i + 1, set2zero] <- 0
         }
@@ -85,7 +85,7 @@ iterate.tbl_df <- function(parms = NULL, N0 = NULL, popfun = NULL, ...) {
 #' @rdname iterate
 iterate.data.frame <- function(parms = NULL, N0 = NULL, popfun = NULL, ...) {
   parms <- tibble::as_tibble(parms)
-  result <- iterate(parms, N0, popfun)
+  result <- iterate(parms, N0, popfun, ...)
   return(as.data.frame(result))
 }
 
